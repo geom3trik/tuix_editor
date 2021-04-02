@@ -1,0 +1,118 @@
+.item {
+    border-width: 0px;
+}
+
+.item:checked {
+    border-width: 2px;
+    border-color: black;
+}
+
+.tree {
+    width: 300px;
+    background-color: #303030;
+}
+
+.canvas {
+    flex-grow: 1.0;
+    background-color: #b9b9b9;
+}
+
+
+.inspector {
+    width: 300px;
+    background-color: #303030;
+}
+
+.title {
+    height: 30px;
+    color: white;
+    padding-left: 10px;
+    background-color: #505050;
+}
+
+.h1 {
+    height: 30px;
+    color: white;
+    padding-left: 10px;
+}
+
+
+.list {
+    flex-direction: row;
+    flex-grow: 1.0;
+    height: 40px;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.row {
+    flex-direction: row;
+    flex-grow: 1.0;
+    padding: 5px;
+}
+
+.list_button {
+    background-color: #1f1f1f;
+    flex-grow: 1.0;
+    text-justify: center;
+}
+
+.quick_button {
+    margin: 5px;
+    background-color: #505050;
+    text-justify: center;
+    flex-grow: 1.0;
+}
+
+.list_button:checked {
+    background-color: #505050;
+}
+
+.input_label {
+    height: 15px;
+    text-justify: center;
+    margin-left: 5px;
+    margin-right: 5px;
+    font-size: 14;
+}
+
+textbox {
+    background-color: #1f1f1f;
+    color: #dddddd;
+    margin: 5px;
+    height: 30px;
+    flex-grow: 1.0;
+    padding-left: 5px;
+}
+
+
+panel>.header {
+    height: 30px;
+    background-color: #383838;
+    flex-direction: row;
+}
+
+panel.level1>.header {
+    background-color: #383838;
+    padding-left: 15px;
+}
+
+panel.level2>.header {
+    background-color: #383838;
+    padding-left: 30px;
+}
+
+panel.level3>.header {
+    background-color: #383838;
+    padding-left: 45px;
+}
+
+panel>.header:hover {
+    background-color: #424242;
+}
+
+panel>.container {
+    background-color: #383838;
+    /* padding-left: 15px; */
+}
