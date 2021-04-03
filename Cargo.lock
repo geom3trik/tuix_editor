@@ -1256,7 +1256,7 @@ checksum = "62ddb402ac6c2af6f7a2844243887631c4e94b51585b229fcfddb43958cd55ca"
 [[package]]
 name = "tuix"
 version = "0.1.0"
-source = "git+https://github.com/geom3trik/tuix?branch=context#5778f4a596b1bd09967960892889d30ed5572b7b"
+source = "git+https://github.com/geom3trik/tuix?branch=experiment#f30f1c325cf43a61696a4df8fc75207dc1808e3c"
 dependencies = [
  "tuix_core",
  "tuix_glutin",
@@ -1266,7 +1266,7 @@ dependencies = [
 [[package]]
 name = "tuix_core"
 version = "0.1.0"
-source = "git+https://github.com/geom3trik/tuix?branch=context#5778f4a596b1bd09967960892889d30ed5572b7b"
+source = "git+https://github.com/geom3trik/tuix?branch=experiment#f30f1c325cf43a61696a4df8fc75207dc1808e3c"
 dependencies = [
  "cssparser",
  "femtovg",
@@ -1278,7 +1278,7 @@ dependencies = [
 [[package]]
 name = "tuix_glutin"
 version = "0.1.0"
-source = "git+https://github.com/geom3trik/tuix?branch=context#5778f4a596b1bd09967960892889d30ed5572b7b"
+source = "git+https://github.com/geom3trik/tuix?branch=experiment#f30f1c325cf43a61696a4df8fc75207dc1808e3c"
 dependencies = [
  "femtovg",
  "glutin",
@@ -1289,7 +1289,7 @@ dependencies = [
 [[package]]
 name = "tuix_inspector_derive"
 version = "0.1.0"
-source = "git+https://github.com/geom3trik/tuix?branch=context#5778f4a596b1bd09967960892889d30ed5572b7b"
+source = "git+https://github.com/geom3trik/tuix?branch=experiment#f30f1c325cf43a61696a4df8fc75207dc1808e3c"
 dependencies = [
  "proc-macro2",
  "quote",

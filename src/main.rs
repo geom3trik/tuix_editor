@@ -22,65 +22,70 @@ struct AppWidget {
 
 impl Widget for AppWidget {
     type Ret = Entity;
-    fn on_build(&mut self, mut context: Context) -> Self::Ret {
+    fn on_build(&mut self, state: &mut State, entity: Entity) -> Self::Ret {
 
         //Element::new().build(&mut context).class("tree");
-        TreePanel::new().build(&mut context).class("tree");
+        TreePanel::new().build(state, entity, |builder| builder.class("tree"));
 
-        let mut canvas = Element::new().build(&mut context).class("canvas");
-        let canvas_entity = canvas.entity();
-        self.canvas = canvas_entity;
+        self.canvas = Element::new().build(state, entity, |builder| builder.class("canvas"));
 
-        canvas.state().style.layout_type.insert(canvas_entity, LayoutType::Vertical);
-        let canvas_entity = canvas.entity();
+        state.style.layout_type.insert(self.canvas, LayoutType::Vertical);
 
-        let mut selected = Element::new().build(&mut canvas)
+        self.selected = Element::new().build(state, self.canvas, |builder|
+            builder
             .set_width(Length::Pixels(100.0))
             .set_height(Length::Pixels(100.0))
             .set_background_color(Color::rgb(50, 50, 160))
-            .set_clip_widget(canvas_entity)
-            .class("item");
-        self.selected = selected.entity();
+            .set_clip_widget(self.canvas)
+            .class("item"));
 
-        selected.state().style.layout_type.insert(self.selected, LayoutType::Vertical);
+        state.style.layout_type.insert(self.selected, LayoutType::Vertical);
 
-        selected.state().style.main_axis.insert(self.selected, Axis {
+        state.style.main_axis.insert(self.selected, Axis {
             space_before: Units::Stretch(1.0),
             size: Units::Stretch(1.0),
             space_after: Units::Stretch(1.0),
         });
 
-        selected.state().style.cross_axis.insert(self.selected, Axis {
+        state.style.cross_axis.insert(self.selected, Axis {
             space_before: Units::Stretch(1.0),
             size: Units::Stretch(1.0),
             space_after: Units::Stretch(1.0),
         });
 
-        selected.state().style.main_axis_align.insert(self.selected, AxisAlign {
+        state.style.main_axis_align.insert(self.selected, AxisAlign {
             space_before_first: Units::Stretch(1.0),
             space_between: Units::Stretch(1.0),
             space_after_last: Units::Stretch(1.0),
         });
 
-        selected.state().style.cross_axis_align.insert(self.selected, AxisAlign {
+        state.style.cross_axis_align.insert(self.selected, AxisAlign {
             space_before_first: Units::Stretch(1.0),
             space_between: Units::Stretch(1.0),
             space_after_last: Units::Stretch(1.0),
         });
 
-        let first = Element::new().build(&mut selected).set_background_color(Color::rgb(200, 80, 0)).class("item");
-        let first_entity = first.entity();
-        let second = Element::new().build(&mut selected).set_background_color(Color::rgb(200, 200, 0)).class("item");
-        let second_entity = second.entity();
-        let third = Element::new().build(&mut selected).set_background_color(Color::rgb(200, 80, 200)).class("item");
-        let third_entity = third.entity();
+        let first = Element::new().build(state, self.selected, |builder| 
+            builder
+                .set_background_color(Color::rgb(200, 80, 0))
+                .class("item")
+            );
+        let second = Element::new().build(state, self.selected, |builder|
+            builder
+                .set_background_color(Color::rgb(200, 200, 0))
+                .class("item")
+        );
+        let third = Element::new().build(state, self.selected, |builder|
+            builder
+                .set_background_color(Color::rgb(200, 80, 200))
+                .class("item")
+        );
 
-        Inspector::new(self.selected).build(&mut context).class("inspector");
+        Inspector::new(self.selected).build(state, entity, |builder| builder.class("inspector"));
 
-        let context_entity = context.entity();
-        context.state().insert_event(Event::new(AppEvent::Init(canvas_entity)).target(context_entity).propagate(Propagation::Fall));
+        state.insert_event(Event::new(AppEvent::Init(self.canvas)).target(entity).propagate(Propagation::Fall));
 
-        context.set_flex_direction(FlexDirection::Row).entity()
+        entity.set_flex_direction(state, FlexDirection::Row)
     }
 
     fn on_event(&mut self, state: &mut State, entity: Entity, event: &mut Event) {
@@ -109,14 +114,14 @@ impl Widget for AppWidget {
 
 
 fn main() {
-    let app = Application::new(|mut context, window|{
-        context.state().add_stylesheet("src/style.css");
+    let app = Application::new(|state, window|{
+        state.add_stylesheet("src/style.css");
 
         
 
-        AppWidget::default().build(&mut context).set_flex_grow(1.0);
+        AppWidget::default().build(state, window.entity(), |builder| builder.set_flex_grow(1.0));
 
-        context.set_flex_direction(FlexDirection::Row);
+        window.set_flex_direction(state, FlexDirection::Row);
 
     });
 

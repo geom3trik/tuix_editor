@@ -18,11 +18,11 @@ impl Inspector {
 
 impl Widget for Inspector {
     type Ret = Entity;
-    fn on_build(&mut self, mut context: Context) -> Self::Ret {
+    fn on_build(&mut self, state: &mut State, entity: Entity) -> Self::Ret {
 
-        ElementLayout::new(self.selected).build(&mut context);
+        ElementLayout::new(self.selected).build(state, entity, |ctx| ctx);
         
-        context.entity()
+        entity
     }
 }
 
@@ -81,95 +81,109 @@ impl ElementLayout {
 
 impl Widget for ElementLayout {
     type Ret = Entity;
-    fn on_build(&mut self, mut context: Context) -> Self::Ret {
+    fn on_build(&mut self, state: &mut State, entity: Entity) -> Self::Ret {
         
-        Label::new("ELEMENT LAYOUT").build(&mut context).class("title");
-        Label::new("Positioning Type (TODO)").build(&mut context).class("h1");
-        let mut list = List::new().build(&mut context).class("list");
-        CheckButton::new(false).build(&mut list).class("list_button").set_text("Self-Directed");
-        CheckButton::new(true).build(&mut list).class("list_button").set_text("Parent-Directed");
+        Label::new("ELEMENT LAYOUT")
+            .build(state, entity, |cx| cx.class("title"));
+        Label::new("Positioning Type (TODO)")
+            .build(state, entity, |cx| cx.class("h1"));
+        let list = List::new()
+            .build(state, entity, |cx| cx.class("list"));
+        CheckButton::new(false)
+            .build(state, list, |cx| cx.class("list_button").set_text("Self-Directed"));
+        CheckButton::new(true)
+            .build(state, list, |cx| cx.class("list_button").set_text("Parent-Directed"));
         
-        Label::new("Main Axis").build(&mut context).class("h1");
-        let mut row = HBox::new().build(&mut context).class("row");
+        Label::new("Main Axis")
+            .build(state, entity, |cx| cx.class("h1"));
+        let row = HBox::new()
+            .build(state, entity, |cx| cx.class("row"));
         
-        let mut column = VBox::new().build(&mut row).set_flex_grow(1.0);
-        Label::new("Before").build(&mut column).class("input_label");
-        self.main_space_before = Textbox::new("1s").build(&mut column).entity();
+        let column = VBox::new()
+            .build(state, row, |cx| cx.set_flex_grow(1.0));
+        Label::new("Before")
+            .build(state, column, |cx| cx.class("input_label"));
+        self.main_space_before = Textbox::new("1s")
+            .build(state, column, |cx| cx);
 
-        let mut column = VBox::new().build(&mut row).set_flex_grow(1.0);
-        Label::new("Size").build(&mut column).class("input_label");
-        self.main_size = Textbox::new("1s").build(&mut column).entity();
-
-
-        let mut column = VBox::new().build(&mut row).set_flex_grow(1.0);
-        Label::new("After").build(&mut column).class("input_label");
-        self.main_space_after = Textbox::new("1s").build(&mut column).entity();
-
-        Label::new("Cross Axis").build(&mut context).class("h1");
-        let mut row = HBox::new().build(&mut context).class("row");
+        let column = VBox::new()
+            .build(state, row, |cx| cx.set_flex_grow(1.0));
         
-        let mut column = VBox::new().build(&mut row).set_flex_grow(1.0);
-        Label::new("Before").build(&mut column).class("input_label");
-        self.cross_space_before = Textbox::new("1s").build(&mut column).entity();
-
-        let mut column = VBox::new().build(&mut row).set_flex_grow(1.0);
-        Label::new("Size").build(&mut column).class("input_label");
-        self.cross_size = Textbox::new("1s").build(&mut column).entity();
+        Label::new("Size")
+            .build(state, column, |cx| cx.class("input_label"));
+        self.main_size = Textbox::new("1s")
+            .build(state, column, |cx| cx);
 
 
-        let mut column = VBox::new().build(&mut row).set_flex_grow(1.0);
-        Label::new("After").build(&mut column).class("input_label");
-        self.cross_space_after = Textbox::new("1s").build(&mut column).entity();
+        let column = VBox::new().build(state, row, |cx| cx.set_flex_grow(1.0));
+        Label::new("After").build(state, column, |cx| cx.class("input_label"));
+        self.main_space_after = Textbox::new("1s").build(state, column, |cx| cx);
 
-        Label::new("CHILDREN LAYOUT").build(&mut context).class("title");
+        Label::new("Cross Axis").build(state, entity, |cx| cx.class("h1"));
+        let row = HBox::new().build(state, entity, |cx| cx.class("row"));
+        
+        let column = VBox::new().build(state, row, |cx| cx.set_flex_grow(1.0));
+        Label::new("Before").build(state, column, |cx| cx.class("input_label"));
+        self.cross_space_before = Textbox::new("1s").build(state, column, |cx| cx);
+
+        let column = VBox::new().build(state, row, |cx| cx.set_flex_grow(1.0));
+        Label::new("Size").build(state, column, |cx| cx.class("input_label"));
+        self.cross_size = Textbox::new("1s").build(state, column, |cx| cx);
+
+
+        let column = VBox::new().build(state, row, |cx| cx.set_flex_grow(1.0));
+        Label::new("After").build(state, column, |cx| cx.class("input_label"));
+        self.cross_space_after = Textbox::new("1s").build(state, column, |cx| cx);
+
+        Label::new("CHILDREN LAYOUT").build(state, entity, |cx| cx.class("title"));
         //let row = HBox::new().build(&mut context).set_flex_grow(1.0);
 
 
-        Label::new("Main Axis Align").build(&mut context).class("h1");
-        let mut row = HBox::new().build(&mut context).class("row");
+        Label::new("Main Axis Align").build(state, entity, |cx| cx.class("h1"));
+        let row = HBox::new().build(state, entity, |cx| cx.class("row"));
         
-        let mut column = VBox::new().build(&mut row).set_flex_grow(1.0);
-        Label::new("Before First").build(&mut column).class("input_label");
-        self.main_space_before_first = Textbox::new("1s").build(&mut column).entity();
+        let column = VBox::new().build(state, row, |cx| cx.set_flex_grow(1.0));
+        Label::new("Before First").build(state, column, |cx| cx.class("input_label"));
+        self.main_space_before_first = Textbox::new("1s").build(state, column, |cx| cx);
 
-        let mut column = VBox::new().build(&mut row).set_flex_grow(1.0);
-        Label::new("Between").build(&mut column).class("input_label");
-        self.main_space_between = Textbox::new("1s").build(&mut column).entity();
+        let mut column = VBox::new().build(state, row, |cx| cx.set_flex_grow(1.0));
+        Label::new("Between").build(state, column, |cx| cx.class("input_label"));
+        self.main_space_between = Textbox::new("1s").build(state, column, |cx| cx);
 
 
-        let mut column = VBox::new().build(&mut row).set_flex_grow(1.0);
-        Label::new("After Last").build(&mut column).class("input_label");
-        self.main_space_after_last = Textbox::new("1s").build(&mut column).entity();
+        let mut column = VBox::new().build(state, row, |cx| cx.set_flex_grow(1.0));
+        Label::new("After Last").build(state, column, |cx| cx.class("input_label"));
+        self.main_space_after_last = Textbox::new("1s").build(state, column, |cx| cx);
 
-        let mut list = List::new().build(&mut context).class("list");
-        self.main_start = Button::with_label("Start").build(&mut list).class("quick_button").entity();
-        self.main_center = Button::with_label("Center").build(&mut list).class("quick_button").entity();
-        self.main_end = Button::with_label("End").build(&mut list).class("quick_button").entity();
-        let mut list = List::new().build(&mut context).class("list");
-        self.main_space_around = Button::with_label("Around").build(&mut list).class("quick_button").entity();
-        self.main_space_between_button = Button::with_label("Between").build(&mut list).class("quick_button").entity();
+        let mut list = List::new().build(state, entity, |cx| cx.class("list"));
+        self.main_start = Button::with_label("Start").build(state, list, |cx| cx.class("quick_button"));
+        self.main_center = Button::with_label("Center").build(state, list, |cx| cx.class("quick_button"));
+        self.main_end = Button::with_label("End").build(state, list, |cx| cx.class("quick_button"));
+        let mut list = List::new().build(state, entity, |cx| cx.class("list"));
+        self.main_space_around = Button::with_label("Around").build(state, list, |cx| cx.class("quick_button"));
+        self.main_space_between_button = Button::with_label("Between").build(state, list, |cx| cx.class("quick_button"));
         //self.main_space_evenly = Button::with_label("Evenly").build(&mut list).class("quick_button").entity();
-        self.main_space_stretch = Button::with_label("Stretch").build(&mut list).class("quick_button").entity();
+        self.main_space_stretch = Button::with_label("Stretch").build(state, list, |cx| cx.class("quick_button"));
 
 
-        Label::new("Cross Axis Align").build(&mut context).class("h1");
-        let mut row = HBox::new().build(&mut context).class("row");
+        Label::new("Cross Axis Align").build(state, entity, |cx| cx.class("h1"));
+        let mut row = HBox::new().build(state, entity, |cx| cx.class("row"));
         
-        let mut column = VBox::new().build(&mut row).set_flex_grow(1.0);
-        Label::new("Before").build(&mut column).class("label");
-        self.cross_space_before_first = Textbox::new("1s").build(&mut column).entity();
+        let mut column = VBox::new().build(state, row, |cx| cx.set_flex_grow(1.0));
+        Label::new("Before").build(state, column, |cx| cx.class("label"));
+        self.cross_space_before_first = Textbox::new("1s").build(state, column, |cx| cx);
 
-        let mut column = VBox::new().build(&mut row).set_flex_grow(1.0);
-        Label::new("After").build(&mut column).class("label");
-        self.cross_space_after_last = Textbox::new("1s").build(&mut column).entity();
+        let mut column = VBox::new().build(state, row, |cx| cx.set_flex_grow(1.0));
+        Label::new("After").build(state, column, |cx| cx.class("label"));
+        self.cross_space_after_last = Textbox::new("1s").build(state, column, |cx| cx);
 
-        let mut list = List::new().build(&mut context).class("list");
-        self.cross_start = Button::with_label("Start").build(&mut list).class("quick_button").entity();
-        self.cross_center = Button::with_label("Center").build(&mut list).class("quick_button").entity();
-        self.cross_end = Button::with_label("End").build(&mut list).class("quick_button").entity();
-        self.cross_stretch = Button::with_label("Stretch").build(&mut list).class("quick_button").entity();
+        let mut list = List::new().build(state ,entity, |cx| cx.class("list"));
+        self.cross_start = Button::with_label("Start").build(state, list, |cx| cx.class("quick_button"));
+        self.cross_center = Button::with_label("Center").build(state, list, |cx| cx.class("quick_button"));
+        self.cross_end = Button::with_label("End").build(state, list, |cx| cx.class("quick_button"));
+        self.cross_stretch = Button::with_label("Stretch").build(state, list, |cx| cx.class("quick_button"));
 
-        context.entity()
+        entity
     }
 
     fn on_event(&mut self, state: &mut State, entity: Entity, event: &mut Event) {
@@ -507,16 +521,16 @@ impl Widget for ElementLayout {
     }
 }
 
-pub fn generate_item(parent: Entity, mut context: Context<Entity>, level: u32) {
-    println!("context: {}", context.entity());
-    let hierarchy = context.state().hierarchy.clone();
+pub fn generate_item(state: &mut State, parent: Entity, parent_widget: Entity, level: u32) {
+
+    let hierarchy = state.hierarchy.clone();
     let class_name = "level".to_string() + &level.to_string();
     for entity in parent.child_iter(&hierarchy) {
         
-        let mut child = Panel::new("CHILD").build(&mut context).class(&class_name);
+        let child = Panel::new("CHILD").build(state, parent_widget, |builder| builder.class(&class_name));
         let child_entity = child.entity();
         println!("Child: {}", child_entity);
-        generate_item(entity, child, level + 1);
+        generate_item(state,entity, child, level + 1);
     }
 }
 
@@ -537,22 +551,14 @@ impl TreePanel {
 
 impl Widget for TreePanel {
     type Ret = Entity;
-    fn on_build(&mut self, mut context: Context) -> Self::Ret {
+    fn on_build(&mut self, state: &mut State, entity: Entity) -> Self::Ret {
         
-        let mut main = Element::new().build(&mut context).set_flex_grow(1.0);
-        let mut root = Panel::new("ROOT").build(&mut main);
-        self.root_panel = root.data;
-        println!("root_panel: {}", self.root_panel);
-        //let parent = root.entity();
-        //let state = root.state();
+        let main = Element::new().build(state, entity, |builder| builder.set_flex_grow(1.0));
+        self.root_panel = Panel::new("ROOT").build(state, main, |b| b);
         
-        
+        Element::new().build(state, entity, |b| b.set_flex_basis(Length::Pixels(30.0)));
 
-        Element::new().build(&mut context).set_flex_basis(Length::Pixels(30.0));
-
-        
-        
-        context.entity()
+        entity
     }
 
     fn on_event(&mut self, state: &mut State, entity: Entity, event: &mut Event) {
@@ -561,12 +567,7 @@ impl Widget for TreePanel {
 
                 AppEvent::Init(root) => {
                     if *root != Entity::null() {
-                        let root_panel = Context {
-                            data: self.root_panel,
-                            state,
-                            entity: self.root_panel,
-                        };
-                        generate_item(*root, root_panel, 1);
+                        generate_item(state, *root, self.root_panel, 1);
                         event.consume();
                     }
 
