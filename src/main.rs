@@ -18,6 +18,10 @@ pub enum AppEvent {
 struct AppWidget {
     selected: Entity,
     canvas: Entity,
+
+    first: Entity,
+    second: Entity,
+    third: Entity,
 }
 
 impl Widget for AppWidget {
@@ -29,29 +33,17 @@ impl Widget for AppWidget {
 
         self.canvas = Element::new().build(state, entity, |builder| builder.class("canvas"));
 
-        state.style.layout_type.insert(self.canvas, LayoutType::Vertical);
+        state.style.layout_type.insert(self.canvas, LayoutType::Horizontal);
 
         self.selected = Element::new().build(state, self.canvas, |builder|
             builder
-            .set_width(Length::Pixels(100.0))
-            .set_height(Length::Pixels(100.0))
+            .set_width(Units::Pixels(300.0))
+            .set_height(Units::Pixels(300.0))
             .set_background_color(Color::rgb(50, 50, 160))
             .set_clip_widget(self.canvas)
             .class("item"));
 
         state.style.layout_type.insert(self.selected, LayoutType::Vertical);
-
-        state.style.main_axis.insert(self.selected, Axis {
-            space_before: Units::Stretch(1.0),
-            size: Units::Stretch(1.0),
-            space_after: Units::Stretch(1.0),
-        });
-
-        state.style.cross_axis.insert(self.selected, Axis {
-            space_before: Units::Stretch(1.0),
-            size: Units::Stretch(1.0),
-            space_after: Units::Stretch(1.0),
-        });
 
         state.style.main_axis_align.insert(self.selected, AxisAlign {
             space_before_first: Units::Stretch(1.0),
@@ -65,19 +57,36 @@ impl Widget for AppWidget {
             space_after_last: Units::Stretch(1.0),
         });
 
-        let first = Element::new().build(state, self.selected, |builder| 
+        self.first = Element::new().build(state, self.selected, |builder| 
             builder
                 .set_background_color(Color::rgb(200, 80, 0))
+                .set_width(Units::Stretch(1.0))
+                .set_height(Units::Stretch(1.0))
+                .set_max_width(Units::Pixels(50.0))
+                .set_text_justify(Justify::Center)
+                .set_color(Color::black())
                 .class("item")
             );
-        let second = Element::new().build(state, self.selected, |builder|
+        self.second = Element::new().build(state, self.selected, |builder|
             builder
                 .set_background_color(Color::rgb(200, 200, 0))
+                .set_width(Units::Stretch(1.0))
+                .set_height(Units::Stretch(1.0))
+                .set_text_justify(Justify::Center)
+                .set_color(Color::black())
+                //.set_max_width(Units::Pixels(70.0))
                 .class("item")
         );
-        let third = Element::new().build(state, self.selected, |builder|
+
+        self.third = Element::new().build(state, self.selected, |builder|
             builder
                 .set_background_color(Color::rgb(200, 80, 200))
+                .set_width(Units::Stretch(1.0))
+                .set_height(Units::Stretch(1.0))
+                .set_min_width(Units::Pixels(90.0))
+                .set_max_width(Units::Pixels(100.0))
+                .set_text_justify(Justify::Center)
+                .set_color(Color::black())
                 .class("item")
         );
 
@@ -85,12 +94,29 @@ impl Widget for AppWidget {
 
         state.insert_event(Event::new(AppEvent::Init(self.canvas)).target(entity).propagate(Propagation::Fall));
 
-        entity.set_flex_direction(state, FlexDirection::Row)
+        state.focused = entity;
+
+        entity.set_flex_direction(state, FlexDirection::Row).set_layout_type(state, LayoutType::Horizontal)
     }
 
     fn on_event(&mut self, state: &mut State, entity: Entity, event: &mut Event) {
         if let Some(window_event) = event.message.downcast::<WindowEvent>() {
             match window_event {
+
+                WindowEvent::GeometryChanged(_) => {
+                    if event.target != self.first || event.target != self.second || event.target != self.third {
+                        let first_width = format!("{}",state.data.get_width(self.first) as u32);
+                        self.first.set_text(state, &first_width);
+
+                        let second_width = format!("{}",state.data.get_width(self.second) as u32);
+                        self.second.set_text(state, &second_width);
+
+                        let third_width = format!("{}",state.data.get_width(self.third) as u32);
+                        self.third.set_text(state, &third_width);
+                    }
+                    
+                }
+
                 WindowEvent::MouseDown(button) => {
                     if *button == MouseButton::Left {
                         if self.selected != state.hovered {
@@ -100,11 +126,29 @@ impl Widget for AppWidget {
                                 self.selected.set_checked(state, false);
                                 println!("Selected: {} Hovered: {}", self.selected, state.hovered);
                                 self.selected = state.hovered;
+                                state.focused = entity;
                                 state.insert_event(Event::new(AppEvent::SelectWidget(state.hovered)).target(entity).propagate(Propagation::Fall));
                             }
                         }
                     }
                 }
+
+                WindowEvent::KeyDown(code, key) => {
+                    if event.target == entity {
+                        if *key == Some(Key::Enter) {
+                            println!("Enter Key Pressed");
+                            Element::new().build(state, self.selected, |builder| 
+                                builder
+                                    .set_width(Units::Pixels(30.0))
+                                    .set_height(Units::Pixels(30.0))
+                                    .set_background_color(Color::red())
+                                    .class("item")
+                            );
+                        }                        
+                    }
+                }
+
+
 
                 _=> {}
             }
@@ -121,7 +165,7 @@ fn main() {
 
         AppWidget::default().build(state, window.entity(), |builder| builder.set_flex_grow(1.0));
 
-        window.set_flex_direction(state, FlexDirection::Row);
+        window.set_flex_direction(state, FlexDirection::Row).set_layout_type(state, LayoutType::Horizontal);
 
     });
 
