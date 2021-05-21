@@ -5,6 +5,38 @@ use tuix::*;
 pub mod inspector;
 pub use inspector::*;
 
+use femtovg::{Canvas, renderer::OpenGl, Path, Paint};
+
+#[derive(Default)]
+struct Overlay {
+    selected: Entity,
+}
+
+impl Widget for Overlay {
+    type Ret = Entity;
+    fn on_build(&mut self, state: &mut State, entity: Entity) -> Self::Ret {
+        entity
+    }
+
+    fn on_draw(&mut self, state: &mut State, entity: Entity, canvas: &mut Canvas<OpenGl>) {
+        if self.selected != Entity::null() {
+            let bounds = state.data.get_bounds(self.selected);
+
+            let mut path = Path::new();
+
+            path.move_to(bounds.x, bounds.y);
+            path.line_to(bounds.x + bounds.w, bounds.y);
+            path.line_to(bounds.x + bounds.w, bounds.y + bounds.h);
+            path.line_to(bounds.x, bounds.y + bounds.h);
+            path.line_to(bounds.x, bounds.y);
+
+            let paint = Paint::color(femtovg::Color::white());
+
+            canvas.stroke_path(&mut path, paint);
+        }
+    }
+}
+
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum AppEvent {
@@ -31,7 +63,14 @@ impl Widget for AppWidget {
         //Element::new().build(&mut context).class("tree");
         TreePanel::new().build(state, entity, |builder| builder.class("tree"));
 
-        self.canvas = Element::new().build(state, entity, |builder| builder.class("canvas"));
+        // CANVAS
+        self.canvas = Element::new().build(state, entity, |builder| 
+            builder
+                .class("canvas")
+                .set_child_space(Stretch(1.0))
+        );
+
+        // Overlay
 
         state.style.layout_type.insert(self.canvas, LayoutType::Horizontal);
 
